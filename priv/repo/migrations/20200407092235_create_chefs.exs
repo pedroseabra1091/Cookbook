@@ -5,7 +5,7 @@ defmodule Cookbook.Repo.Migrations.CreateChefs do
     create table(:chefs) do
       add :name, :string
 
-      timestamps
+      timestamps()
     end
   end
 end

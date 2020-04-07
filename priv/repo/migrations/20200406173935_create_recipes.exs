@@ -8,11 +8,11 @@ defmodule Cookbook.Repo.Migrations.CreateRecipes do
     create table(:recipes) do
       add :name, :string
       add :steps, {:array, :string}
-      add :cooking_time, :float
+      add :cooking_time, :integer
       add :category, Recipe.type()
       add :portions, :integer
 
-      timestamps
+      timestamps()
     end
   end
 end

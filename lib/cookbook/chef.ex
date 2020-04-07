@@ -1,9 +1,14 @@
 defmodule Cookbook.Chef do
   use Ecto.Schema
 
-  schema "chefs" do
-    field :name, :string
+  alias Cookbook.{Recipe, Restaurant}
 
-    has_many :recipes, Cookbook.Recipe
+  schema "chefs" do
+    field :name, :string, null: false
+
+    has_many :restaurants, Restaurant
+    has_many :recipes, Recipe
+
+    timestamps()
   end
 end

@@ -5,7 +5,7 @@ defmodule Cookbook.Repo.Migrations.CreateIngredients do
     create table(:ingredients) do
       add :name, :string
 
-      timestamps
+      timestamps(default: fragment("NOW()"))
     end
   end
 end

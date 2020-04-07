@@ -5,5 +5,7 @@ defmodule Cookbook.Ingredient do
     field :name, :string
 
     many_to_many :recipes, Cookbook.Recipe, join_through: "recipe_ingredients"
+
+    timestamps()
   end
 end
