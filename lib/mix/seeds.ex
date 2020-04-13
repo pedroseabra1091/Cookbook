@@ -71,13 +71,6 @@ defmodule Mix.Tasks.Seeds do
     |> Repo.update!()
   end
 
-  defp ingredient_seeds do
-    [
-      [%{name: "Ground beef"}, %{name: "Pepper"}, %{name: "Onion"}, %{name: "Tomato"}, %{name: "Mozarella"}, %{name: "Noodles"}],
-      [%{name: "Rabbit"}, %{name: "Olive oil"}, %{name: "Tomato"}, %{name: "Basil"}, %{name: "Rosemary"}]
-    ]
-  end
-
   defp chef_seeds do
     [%{name: "Henrique Sá Pessoa"}, %{name: "José Avillez"}]
   end
@@ -99,14 +92,28 @@ defmodule Mix.Tasks.Seeds do
 
   defp recipe_seeds do
     [
-      [%{
-        name: "Rabbit stew",
-        steps: [
-          "Joint the rabbits into pieces: the shoulders, ribs, loins and hind legs. Season all of the pieces with salt and pepper and lightly dust with a little flour", "Sauté the rabbit pieces all over in a frying pan over a high heat with a little olive oil. When golden-brown, set the rabbit to one side and discard the oil from the pan", "Pour in some more extra virgin olive oil and add the garlic, shallots and chilli. Cook for a few minutes until the shallots are golden", "Place the pieces of rabbit in the pan again and deglaze with the white wine. After about 5 minutes, add the tomatoes and the vegetable stock", "Leave to cook over medium heat for about 20 minutes", "Add the herbs and continue to cook over high heat until you obtain a thick sauce, for about another 30 minutes", "Garnish with basil leaves and sprigs of rosemary and serve"
-        ],
-        cooking_time: 120,
-        portions: 4
-      }],
+      [
+        %{
+          name: "Rabbit stew",
+          steps: [
+            "Joint the rabbits into pieces: the shoulders, ribs, loins and hind legs. Season all of the pieces with salt and pepper and lightly dust with a little flour", "Sauté the rabbit pieces all over in a frying pan over a high heat with a little olive oil. When golden-brown, set the rabbit to one side and discard the oil from the pan", "Pour in some more extra virgin olive oil and add the garlic, shallots and chilli. Cook for a few minutes until the shallots are golden", "Place the pieces of rabbit in the pan again and deglaze with the white wine. After about 5 minutes, add the tomatoes and the vegetable stock", "Leave to cook over medium heat for about 20 minutes", "Add the herbs and continue to cook over high heat until you obtain a thick sauce, for about another 30 minutes", "Garnish with basil leaves and sprigs of rosemary and serve"
+          ],
+          cooking_time: 120,
+          category: "meat",
+          portions: 4
+        },
+        %{
+          name: "Pesto pasta",
+          steps: [
+            "Cook pasta in a large pot of boiling water until done. Drain.",
+            "Meanwhile, heat the oil in a frying pan over medium low heat. Add pesto, onion, and salt and pepper. Cook about five minutes, or until onions are soft.",
+            "In a large bowl, mix pesto mixture into pasta. Stir in grated cheese. Serve."
+          ],
+          cooking_time: 20,
+          category: "vegetarian"
+          portions: 2
+        }
+      ],
       [%{
         name: "Lasagna",
         steps: [
@@ -117,5 +124,13 @@ defmodule Mix.Tasks.Seeds do
         category: "meat"
     }],
   ]
+  end
+
+  defp ingredient_seeds do
+    [
+      [%{name: "Rabbit"}, %{name: "Olive oil"}, %{name: "Tomato"}, %{name: "Basil"}, %{name: "Rosemary"}],
+      [%{name: "Onion"}, %{name: "Pesto"}, %{name: "Olive oil"}, %{name: "Parmesan"}, %{name: "Pasta"}],
+      [%{name: "Ground beef"}, %{name: "Pepper"}, %{name: "Onion"}, %{name: "Tomato"}, %{name: "Mozarella"}, %{name: "Noodles"}],
+    ]
   end
 end
