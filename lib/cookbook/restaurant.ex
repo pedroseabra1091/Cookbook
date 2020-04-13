@@ -4,7 +4,8 @@ defmodule Cookbook.Restaurant do
   alias Cookbook.Chef
 
   schema "restaurants" do
-    field :name, :string
+    field :name, :string, null: false
+    field :location, :string, null: false
 
     belongs_to :chef, Chef
 

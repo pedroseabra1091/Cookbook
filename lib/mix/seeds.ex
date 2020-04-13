@@ -11,22 +11,26 @@ defmodule Mix.Tasks.Seeds do
   def run(_) do
     start_repo()
 
+    chef_seeds = chef_seeds()
+
     # creates chefs and the respective restaurants
-    create_seeds_for_entire_assoc(Chef, chef_seeds(), :restaurants, restaurant_seeds())
+    entire_assoc_function = fn (seed) -> cast_and_insert(seed, Chef, :restaurants, restaurant_seeds()) end
+    create_seeds_for(chef_seeds, entire_assoc_function)
 
-    # creates recipes for the stored chefs
-    create_seeds_for_one_to_many_assoc(Chef, chef_seeds(), :recipes, recipe_seeds())
+    # creates recipes for the already existing chefs
+    put_assoc_function = fn (seed) -> put_and_update(seed, Chef, :recipes, recipe_seeds()) end
+    create_seeds_for(chef_seeds, put_assoc_function)
 
-    # creates ingredients for the stored recipes
+    # creates ingredients for the already existing recipes
     create_seeds_for_many_many_assoc(Recipe, recipe_seeds(), :ingredients, ingredient_seeds())
   end
 
   defp start_repo, do: Mix.Task.run("app.start")
 
-  defp create_seeds_for_entire_assoc(schema, seeds, schema_assoc, assoc_seeds) do
+  def create_seeds_for(seeds, function) do
     seeds
     |> Enum.with_index
-    |> Enum.each(&(cast_and_insert(&1, schema, schema_assoc, assoc_seeds)))
+    |> Enum.each(&function.(&1))
   end
 
   defp cast_and_insert({seed, seed_index}, schema, schema_assoc, assoc_seeds) do
@@ -44,12 +48,6 @@ defmodule Mix.Tasks.Seeds do
     |> unique_constraint(:name)
     |> cast_assoc(schema_assoc)
     |> Repo.insert!()
-  end
-
-  defp create_seeds_for_one_to_many_assoc(schema, seeds, schema_assoc, assoc_seeds) do
-    seeds
-    |> Enum.with_index
-    |> Enum.each(&(put_and_update(&1, schema, schema_assoc, assoc_seeds)))
   end
 
   defp create_seeds_for_many_many_assoc(schema, seeds, schema_assoc, assoc_seeds) do
@@ -86,8 +84,16 @@ defmodule Mix.Tasks.Seeds do
 
   defp restaurant_seeds do
     [
-      [%{name: "Alma"}, %{name: "Mercado da Ribeira"}, %{name: "Tapisco"}],
-      [%{name: "Cantinho do Avillez"}, %{name: "Bairro do Avillez"}, %{name: "Belcanto"}]
+      [
+        %{name: "Alma", location: "Lisbon"},
+        %{name: "Mercado da Ribeira", location: "Lisbon"},
+        %{name: "Tapisco", location: "Porto"}
+      ],
+      [
+        %{name: "Cantinho do Avillez", location: "Lisbon"},
+        %{name: "Bairro do Avillez", location: "Lisbon"},
+        %{name: "Belcanto", location: "Lisbon"}
+      ]
     ]
   end
 

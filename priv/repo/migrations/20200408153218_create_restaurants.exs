@@ -4,6 +4,7 @@ defmodule Cookbook.Repo.Migrations.CreateRestaurants do
   def change do
     create table(:restaurants) do
       add :name, :string
+      add :location, :string
       add :chef_id, references(:chefs)
 
       timestamps()
