@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.Seeds do
   use Mix.Task
 
-  alias Cookbook.{Chef, Ingredient, Recipe}
+  alias Cookbook.{Chef, Recipe}
   alias Cookbook.Repo
 
   import Ecto.Changeset
@@ -110,7 +110,7 @@ defmodule Mix.Tasks.Seeds do
             "In a large bowl, mix pesto mixture into pasta. Stir in grated cheese. Serve."
           ],
           cooking_time: 20,
-          category: "vegetarian"
+          category: "vegetarian",
           portions: 2
         }
       ],

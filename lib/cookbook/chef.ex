@@ -6,8 +6,8 @@ defmodule Cookbook.Chef do
   schema "chefs" do
     field :name, :string, null: false
 
-    has_many :restaurants, Restaurant
-    has_many :recipes, Recipe
+    has_many :restaurants, Restaurant, on_delete: :delete_all
+    has_many :recipes, Recipe, on_delete: :nilify_all
 
     timestamps()
   end
