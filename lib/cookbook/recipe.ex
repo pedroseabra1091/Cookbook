@@ -2,19 +2,19 @@ defmodule Cookbook.Recipe do
   use Ecto.Schema
   use EctoEnum, type: :category, enums: [:meat, :fish, :vegetarian, :vegan]
 
-  alias Cookbook.{Chef, Ingredient}
+  alias Cookbook.{Chef, Ingredient, Repo, Recipe}
 
-  import Ecto.Query
+  import Ecto.{Changeset, Query}
 
   schema "recipes" do
     field :name, :string, null: false
-    field :steps, {:array, :string}
-    field :cooking_time, :integer, default: 0
-    field :category, :string
-    field :portions, :integer, default: 0
+    field :steps, {:array, :string}, null: false
+    field :cooking_time, :integer, null: false
+    field :category, :string, null: false
+    field :portions, :integer, nulL: false
 
-    belongs_to :chef, Chef
-    many_to_many :ingredients, Ingredient, join_through: "recipes_ingredients"
+    belongs_to :chef, Chef, on_replace: :delete
+    many_to_many :ingredients, Ingredient, join_through: "recipes_ingredients", on_delete: :delete_all
 
     timestamps()
   end
@@ -31,4 +31,14 @@ defmodule Cookbook.Recipe do
   end
 
   def name_and_steps(query), do: from r in query, select: map(r, [:name, :steps])
+
+  def changeset(recipe, params \\ %{}) do
+    recipe
+    |> Repo.preload(:ingredients)
+    |> cast(params, ~w(name steps cooking_time category portions)a)
+    |> validate_required(~w(name steps cooking_time category portions)a)
+    |> validate_inclusion(:category, ~w(meat fish vegetarian vegan))
+    |> validate_number(:cooking_time, greater_than: 0)
+    |> validate_number(:portions, greater_than: 0)
+  end
 end
