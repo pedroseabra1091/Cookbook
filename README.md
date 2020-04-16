@@ -9,7 +9,7 @@ Addresses the following topics:
 - Changesets
 - cast_assoc vs put_assoc
 
-TODO:
+Future work:
 - Multi
 - Transaction
 
