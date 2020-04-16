@@ -6,11 +6,11 @@ defmodule Cookbook.Repo.Migrations.CreateRecipes do
   def change do
     Recipe.create_type()
     create table(:recipes) do
-      add :name, :string
-      add :steps, {:array, :string}
-      add :cooking_time, :integer
-      add :category, Recipe.type()
-      add :portions, :integer
+      add :name, :string, null: false
+      add :steps, {:array, :string}, null: false
+      add :cooking_time, :integer, null: false
+      add :category, Recipe.type(), null: false
+      add :portions, :integer, null: false
 
       timestamps()
     end
