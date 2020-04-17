@@ -1,31 +1,36 @@
 defmodule Cookbook.Ingredient do
   use Ecto.Schema
+  use EctoEnum, type: :measure_unit, enums: [:kg, :g, :l]
 
-  alias Cookbook.Ingredient
+  alias Cookbook.{Repo, Ingredient, RecipeIngredient}
 
   import Ecto.Changeset
 
+  require IEx
+
   schema "ingredients" do
     field :name, :string, null: false
+    field :measure_unit, :string
 
-    many_to_many :recipes, Cookbook.Recipe, join_through: "recipe_ingredients"
+    has_many :recipes_ingredients, RecipeIngredient
+    has_many :recipes, through: [:recipes_ingredients, :recipe]
 
     timestamps()
   end
 
-  def insert(params) do
+  def insert_ingredient(params) do
     %Ingredient{}
     |> changeset(params)
     |> Repo.insert()
   end
 
-  def update(ingredient, params) do
+  def update_ingredient(ingredient, params) do
     ingredient
     |> changeset(params)
     |> Repo.update()
   end
 
-  def delete(ingredient) do
+  def delete_ingredient(ingredient) do
     ingredient
     |> Repo.delete()
   end
@@ -41,11 +46,13 @@ defmodule Cookbook.Ingredient do
   def changeset(ingredient, params) do
     ingredient
     |> cast_and_validate(params)
+    |> put_assoc(:recipes_ingredients, params[:recipes_ingredients])
   end
 
   def cast_and_validate(ingredient, params) do
     ingredient
-    |> cast(params, :name)
-    |> validate_required(:name)
+    |> cast(params, ~w(name)a)
+    |> validate_required(~w(name)a)
+    |> unique_constraint(:name)
   end
 end

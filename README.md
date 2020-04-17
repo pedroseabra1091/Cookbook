@@ -7,7 +7,12 @@ Addresses the following topics:
 - Schemas
 - Repo
 - Changesets
+- Associations
+  - `has_many`
+  - `many_many` 
+  - `many_many` with fields in the join table
 - cast_assoc vs put_assoc
+
 
 Future work:
 - Multi
