@@ -95,11 +95,11 @@ defmodule Cookbook.Recipe do
 
   def parse_ingredients(recipe_ingredients) do
     recipe_ingredients
-    |> Enum.map(&get_or_insert_ingredient/1)
+    |> Enum.map(&get_or_build_ingredient/1)
   end
 
-  def get_or_insert_ingredient(%{ingredient: ingredient} = recipe_ingredient) do
-    ingredient = Repo.get_by(Ingredient, name: ingredient.name) || Repo.insert!(struct(Ingredient, ingredient))
+  def get_or_build_ingredient(%{ingredient: ingredient} = recipe_ingredient) do
+    ingredient = Repo.get_by(Ingredient, name: ingredient.name) || struct(Ingredient, ingredient)
 
     %{ingredient: ingredient, quantity: recipe_ingredient[:quantity]}
   end
