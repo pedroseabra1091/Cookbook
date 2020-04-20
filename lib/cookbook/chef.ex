@@ -1,9 +1,9 @@
 defmodule Cookbook.Chef do
   use Ecto.Schema
 
-  alias Cookbook.{Chef, Recipe, Repo, Restaurant}
+  alias Cookbook.{Chef, Recipe, Repo}
 
-  import Ecto.{Changeset, Query}
+  import Ecto.Changeset
 
   require IEx
 
@@ -14,8 +14,6 @@ defmodule Cookbook.Chef do
 
     timestamps()
   end
-
-  def with_name(query, name), do: from q in query, where: q.name == ^name
 
   def insert(params \\ %{}) do
     %Chef{}

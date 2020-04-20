@@ -21,4 +21,6 @@ Future work:
 ## Notes
 - execute `bin/setup` from the root of the project
 
+- execute `mix seeds` from the root of the project.
+
 - `iex -S mix` to access iex shell with the Ecto dependencies
