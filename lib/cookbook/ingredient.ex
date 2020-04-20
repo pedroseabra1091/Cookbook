@@ -46,7 +46,7 @@ defmodule Cookbook.Ingredient do
   def changeset(ingredient, params) do
     ingredient
     |> cast_and_validate(params)
-    |> put_assoc(:recipes_ingredients, params[:recipes_ingredients])
+    |> put_ingredient_assoc(:recipes_ingredients, params[:recipes_ingredients])
   end
 
   def cast_and_validate(ingredient, params) do
@@ -54,5 +54,10 @@ defmodule Cookbook.Ingredient do
     |> cast(params, ~w(name)a)
     |> validate_required(~w(name)a)
     |> unique_constraint(:name)
+  end
+
+  def put_ingredient_assoc(ingredient, _assoc_schema, nil), do: ingredient
+  def put_ingredient_assoc(ingredient, assoc_schema, assoc_params) do
+    ingredient |> put_assoc(assoc_schema, assoc_params)
   end
 end

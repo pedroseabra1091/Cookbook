@@ -77,13 +77,11 @@ defmodule Cookbook.Recipe do
                   |> Map.get(:recipes_ingredients)
                   |> Enum.map(&RecipeIngredient.to_recipe_ingredient/1)
 
-    %{
-      name: recipe.name,
-      steps: recipe.steps,
-      cooking_time: recipe.cooking_time,
-      ingredients: recipe_ingredients,
-      portions: recipe.portions
-    }
+    recipe_steps = Enum.join(recipe.steps, "\n\n")
+
+    recipe="\n==== #{String.capitalize(recipe.name)} ====\n\nIngredients:\n#{recipe_ingredients}\nSteps:\n\n#{recipe_steps}\n\nCooking time: #{recipe.cooking_time} min\n\nPortions: #{recipe.portions}"
+
+    IO.puts(recipe)
   end
 
   def changeset(recipe, params) do
@@ -98,10 +96,13 @@ defmodule Cookbook.Recipe do
     |> Enum.map(&get_or_build_ingredient/1)
   end
 
+  # used to pattern match a ingredient when updating a recipe with new recipe_ingredients
+  def get_or_build_ingredient(%{ingredient: %Ingredient{id: _id}} = recipe_ingredient), do: recipe_ingredient
+
   def get_or_build_ingredient(%{ingredient: ingredient} = recipe_ingredient) do
     ingredient = Repo.get_by(Ingredient, name: ingredient.name) || struct(Ingredient, ingredient)
 
-    %{ingredient: ingredient, quantity: recipe_ingredient[:quantity]}
+    %{ingredient: ingredient, quantity: recipe_ingredient.quantity}
   end
 
   def put_recipe_assoc(recipe, _assoc_schema, nil), do: recipe

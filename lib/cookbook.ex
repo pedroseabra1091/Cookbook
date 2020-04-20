@@ -1,27 +1,19 @@
 defmodule Cookbook do
-  import Cookbook.{Ingredient, Recipe}
+  import Cookbook.{Recipe}
 
   require IEx
 
-  alias Cookbook.{Recipe, Repo}
+  alias Cookbook.{Ingredient, Recipe, Repo}
 
-  def random_recipe() do
-    random() |>  Repo.one() |> to_recipe
-  end
+  def random_recipe(), do: random() |>  Repo.one() |> to_recipe
 
   def all_recipes(), do: Repo.all(Recipe)
 
-  def get_recipe_by_name(recipe_name) do
-    Recipe |> by_name(recipe_name) |> Repo.all |> to_recipe
-  end
+  def get_recipe_by_name(recipe_name), do: Recipe |> by_name(recipe_name) |> Repo.all |> to_recipe
 
-  def get_recipes_from_chef(chef_name) do
-    Recipe |> by_chef(chef_name) |> Repo.all |> to_recipe
-  end
+  def get_recipes_from_chef(chef_name), do: Recipe |> by_chef(chef_name) |> Repo.all |> to_recipe
 
-  def get_recipes_from_category(category) do
-    Recipe |> by_category(category) |> Repo.all |> to_recipe
-  end
+  def get_recipes_from_category(category), do: Recipe |> by_category(category) |> Repo.all |> to_recipe
 
   def get_recipes_by_cooking_time(cooking_time), do: Recipe |> max_cooking_time(cooking_time) |> Repo.all |> to_recipe
 
@@ -40,11 +32,16 @@ defmodule Cookbook do
   end
 
   def add_recipe_ingredients_to_recipe(recipe, recipe_ingredients_params) do
-    recipe = recipe |> Repo.preload(:recipes_ingredients)
+    recipe = recipe |> Repo.preload([recipes_ingredients: [:ingredient]])
 
     recipe_ingredients = recipe.recipes_ingredients ++ recipe_ingredients_params
 
     recipe
     |> update(%{recipe_ingredients: recipe_ingredients})
+  end
+
+  def update_ingredient(ingredient, ingredient_params) do
+    ingredient
+    |> Ingredient.update_ingredient(ingredient_params)
   end
 end

@@ -12,10 +12,6 @@ defmodule Cookbook.RecipeIngredient do
   end
 
   def to_recipe_ingredient(recipe_ingredient) do
-    %{
-      name: recipe_ingredient.ingredient.name,
-      measure_unit: recipe_ingredient.ingredient.measure_unit,
-      quantity: recipe_ingredient.quantity
-    }
+    "- #{recipe_ingredient.quantity}#{recipe_ingredient.ingredient.measure_unit} #{recipe_ingredient.ingredient.name}\n"
   end
 end
