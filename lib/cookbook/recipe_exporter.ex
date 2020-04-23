@@ -1,6 +1,5 @@
 defmodule Cookbook.RecipeExporter do
   @columns ~w(name cooking_time category portions)a
-  @columns_b ~w(name cooking_time category portions)
   @path File.cwd! <> "/recipe.csv"
 
   alias Cookbook.Repo

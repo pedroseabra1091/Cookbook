@@ -1,8 +1,8 @@
 # Cookbook ![crappy wooden spoon](crappy-wooden-spoon.png)
 
-This is a playground created to explore Ecto's capabilities during Elixir session # 5. 
+Playground created to explore Ecto's capabilities during Elixir session # 5. 
 
-Addresses the following topics:
+Cookbook's menu includes :man_cook::
 - Migrations
 - Schemas
 - Repo
@@ -11,14 +11,15 @@ Addresses the following topics:
   - `has_many`
   - `many_many` 
   - `many_many` with fields in the join table
-- cast_assoc vs put_assoc
-
-
-Future work:
-- Multi
+- `cast_assoc` and `put_assoc`
+- Bulk operations, Upserts
+- Streams, Repo.stream
 - Transaction
 
-## Notes
+Cookbook didn't left room for the :cake::
+- Multi
+
+## Before planning your recipes
 - execute `bin/setup` from the root of the project
 
 - execute `mix seeds` from the root of the project.
