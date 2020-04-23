@@ -24,7 +24,8 @@ defmodule Cookbook.MixProject do
     [
       {:ecto_sql, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
-      {:ecto_enum, "~> 1.4"}
+      {:ecto_enum, "~> 1.4"},
+      {:csv, "~> 2.3"}
     ]
   end
 end

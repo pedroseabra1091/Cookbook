@@ -3,7 +3,7 @@ defmodule Cookbook do
 
   require IEx
 
-  alias Cookbook.{Ingredient, Recipe, Repo}
+  alias Cookbook.{Ingredient, Recipe, Repo, RecipeExporter}
 
   def random_recipe(), do: random() |>  Repo.one() |> to_recipe
 
@@ -43,5 +43,11 @@ defmodule Cookbook do
   def update_ingredient(ingredient, ingredient_params) do
     ingredient
     |> Ingredient.update_ingredient(ingredient_params)
+  end
+
+  def export_recipes do
+    Recipe
+    |> Recipe.by_category("meat")
+    |> RecipeExporter.export()
   end
 end
