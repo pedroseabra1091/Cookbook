@@ -29,6 +29,12 @@ defmodule Cookbook.Recipe do
     |> Repo.insert()
   end
 
+  def insert!(params) do
+    %Recipe{}
+    |> changeset(params)
+    |> Repo.insert!()
+  end
+
   def update(recipe, params) do
     recipe
     |> changeset(params)
@@ -84,6 +90,12 @@ defmodule Cookbook.Recipe do
     IO.puts(recipe)
   end
 
+  def multi_changeset(recipe, params) do
+    recipe
+    |> cast(params, ~w(name steps cooking_time category portions)a)
+    |> put_assoc(:chef, params[:chef])
+  end
+
   def changeset(recipe, params) do
     recipe
     |> cast_and_validate(params)
@@ -91,6 +103,7 @@ defmodule Cookbook.Recipe do
     |> put_recipe_assoc(:chef, params[:chef])
   end
 
+  def parse_ingredients(nil), do: nil
   def parse_ingredients(recipe_ingredients) do
     recipe_ingredients
     |> Enum.map(&get_or_build_ingredient/1)
@@ -106,6 +119,7 @@ defmodule Cookbook.Recipe do
   end
 
   def put_recipe_assoc(recipe, _assoc_schema, nil), do: recipe
+
   def put_recipe_assoc(recipe, assoc_schema, assoc_params) do
     recipe |> put_assoc(assoc_schema, assoc_params)
   end

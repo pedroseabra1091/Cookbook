@@ -4,8 +4,6 @@ defmodule Cookbook.RecipeExporter do
 
   alias Cookbook.Repo
 
-  require IEx
-
   def export(query) do
     Repo.transaction(fn ->
       query

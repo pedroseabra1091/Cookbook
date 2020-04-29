@@ -21,6 +21,12 @@ defmodule Cookbook.Chef do
     |> Repo.insert()
   end
 
+  def insert!(params \\ %{}) do
+    %Chef{}
+    |> changeset(params)
+    |> Repo.insert!()
+  end
+
   def update(chef, params \\ %{}) do
     chef
     |> changeset(params)
@@ -30,6 +36,12 @@ defmodule Cookbook.Chef do
   def delete(chef) do
     chef
     |> Repo.delete()
+  end
+
+  def multi_changeset(chef, params) do
+    chef
+    |> cast(params, ~w(name)a)
+    |> put_assoc(:recipes, params[:recipes])
   end
 
   def changeset(chef, params) do

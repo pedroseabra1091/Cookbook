@@ -1,32 +1,87 @@
 defmodule Mix.Tasks.Seeds do
   use Mix.Task
 
-  alias Cookbook.Chef
+  alias Cookbook.{Chef, Page, Recipe, Repo}
 
   require IEx
 
   def run(_) do
     start_repo()
-    Enum.each(seeds_data(), &(Chef.insert(&1)))
+
+    # Transactions with functions
+    # classic_transaction()
+
+    # Non-transaction nested association approach
+    # nested_association_approach()
+
+    # Transactions with Ecto.Multi
+    # multi_approach()
+
+    # Transactions with Ecto.Multi, however validations are made at the embedded schema
+    multi_approach_with_prior_validation()
   end
 
   defp start_repo, do: Mix.Task.run("app.start")
 
+  def classic_transaction do
+    recipe = %{
+      name: 1,
+      steps: [
+        "BEAT eggs, milk, salt and pepper in medium bowl until blended.", "HEAT butter in large nonstick skillet over medium heat until hot. POUR in egg mixture. As eggs begin to set, gently PULL the eggs across the pan with a spatula, forming large soft curds.", "CONTINUE cooking—pulling, lifting and folding eggs—until thickened and no visible liquid egg remains. Do not stir constantly. REMOVE from heat. SERVE immediately."
+      ],
+      category: "vegetarian",
+      portions: 2,
+      cooking_time: 5
+    }
 
-  defp seeds_data do
+    Repo.transaction(fn ->
+      case Chef.insert(%{name: "Gordon"}) do
+        {:ok, chef} -> Recipe.insert!(Map.merge(recipe, %{chef: chef}))
+        {:error, _changeset} -> Repo.rollback(:failed_to_create_chef)
+      end
+    end)
+  end
+
+  defp nested_association_approach, do: Enum.each(nested_data(), &(Chef.insert(&1)))
+
+  # Changesets are performed in the respective schemas
+  defp multi_approach do
+    case Repo.transaction(Page.to_multi(multi_data())) do
+      {:ok, _committed_changes} ->
+        IO.puts("Success on all 4 operations!")
+      {:error, failed_operation, _failed_value, _changes} ->
+        IO.puts("#{failed_operation} failed")
+    end
+  end
+
+  # Changesets are checked in the embedded schema
+  defp multi_approach_with_prior_validation do
+    changeset = Page.changeset(%Page{}, multi_data())
+
+    if changeset.valid? do
+      multi_approach()
+    else
+      IO.inspect changeset
+    end
+  end
+
+  defp nested_data do
     [
       %{
         name: "Henrique Sá Pessoa",
         recipes: [
           %{
-            name: "rabbit stew",
             steps: [
-              "Joint the rabbits into pieces: the shoulders, ribs, loins and hind legs. Season all of the pieces with salt and pepper and lightly dust with a little flour", "Sauté the rabbit pieces all over in a frying pan over a high heat with a little olive oil. When golden-brown, set the rabbit to one side and discard the oil from the pan", "Pour in some more extra virgin olive oil and add the garlic, shallots and chilli. Cook for a few minutes until the shallots are golden", "Place the pieces of rabbit in the pan again and deglaze with the white wine. After about 5 minutes, add the tomatoes and the vegetable stock", "Leave to cook over medium heat for about 20 minutes", "Add the herbs and continue to cook over high heat until you obtain a thick sauce, for about another 30 minutes", "Garnish with basil leaves and sprigs of rosemary and serve"
+              "Season the rabbit legs with salt and pepper then coat them in the flour. Shake off the excess flour and set it aside for later use", "Put the butter and oil into a large heavy-bottomed pan over a medium heat and when the butter has melted and the oil is hot, add the rabbit legs (in batches if necessary – the meat should sear, not steam). Brown the legs on all sides then remove from the pan and set aside", "Add the onion, celery and mushrooms to the pan and cook until soft and beginning to caramelize.", "Stir in the reserved flour and add enough wine to deglaze the pan. Return the rabbit legs and add the rest of the wine, the chicken stock and the thyme making sure the legs are submerged.", "Bring to the boil then reduce to a simmer, cover and cook on the hob for 60–70 minutes until the rabbit is tender. After 30 minutes, remove the lid to allow the liquid to reduce."
             ],
             cooking_time: 120,
             category: "meat",
             portions: 4,
-            recipe_ingredients: [%{ingredient: %{name: "Garlic"}, quantity: 1}, %{ingredient: %{name: "Onion"}, quantity: 1}]
+            recipe_ingredients: [
+              %{ingredient: %{name: "Rabbit Leg"}, quantity: 4},
+              %{ingredient: %{name: "Mushroom"}, quantity: 200},
+              %{ingredient: %{name: "Thyme"}, quantity: 1}
+            ]
           }
         ]
       },
@@ -34,36 +89,46 @@ defmodule Mix.Tasks.Seeds do
         name: "José Avillez",
         recipes: [
           %{
-            name: "lasagna",
+            name: "Lasagna",
             steps: [
-              "Start by making the sauce with ground beef, bell peppers, onions, and a combo of tomato sauce, tomato paste, and crushed tomatoes. The three kinds of tomatoes gives the sauce great depth of flavor.","Let this simmer while you boil the noodles and get the cheese ready.", "From there, it’s just an assembly job. A cup of meat sauce, a layer of noodles, more sauce, followed by a layer of cheese. Repeat until you have three layers and have used up all the ingredients.", "Bake until bubbly and you’re ready to eat!"
+              "Preheat oven to 375º. In a large pot of salted boiling water, cook pasta according to package directions until al dente, less 2 minutes. Drain and drizzle a bit of olive oil to prevent noodles from sticking together.", "Meanwhile, in a large pot over medium-high heat, heat oil. Cook ground beef until no longer pink, breaking up with a wooden spoon. Remove from heat and drain fat. Return beef to skillet and add garlic and oregano and cook, stirring, for 1 minute. Season with salt and pepper, then add marinara and stir until warmed through.", "Combine ricotta, 1/4 cup Parmesan, parsley, and egg in a large mixing bowl and season with salt and pepper. Set aside.", "In a large casserole dish, evenly spread a quarter of the meat sauce across the bottom of the dish, then top with a single layer of lasagna noodles, a layer of ricotta mixture, and a single layer of mozzarella. Repeat layers, topping the last layer of noodles with meat sauce, Parmesan, and mozzarella.", "Cover with foil and bake for 15 minutes, then increase temperature to 400º and bake uncovered for 18 to 20 minutes.", "Garnish with parsley before serving."
             ],
-            cooking_time: 40,
+            cooking_time: 75,
             portions: 8,
             category: "meat",
             recipe_ingredients: [
-              %{ingredient: %{name: "Garlic"}, quantity: 2}, %{ingredient: %{name: "Onion"}, quantity: 2}
+              %{ingredient: %{name: "lasagna noodles"}, quantity: 3},
+              %{ingredient: %{name: "ground beef"}, quantity: 2},
+              %{ingredient: %{name: "garlic"}, quantity: 4},
+              %{ingredient: %{name: "marinana"}, quantity: 2},
+              %{ingredient: %{name: "milk ricotta"}, quantity: 16},
+              %{ingredient: %{name: "parmesan"}, quantity: 0.5},
+              %{ingredient: %{name: "parsley"}, quantity: 0.25},
+              %{ingredient: %{name: "egg"}, quantity: 1},
+              %{ingredient: %{name: "mozzarella"}, quantity: 2},
             ]
           }
         ]
-      },
-      %{
-        name: "Gordon Ramsay",
-        recipes: [
-          %{
-            name: "roast beef with caramelised onion gravy",
-            steps: [
-              "Rub the garlic halves and thyme leaves all over the beef. Place the joint in a large dish, drizzle over the olive oil, then rub it into the meat all over. Cover and leave to marinate in the fridge for 1–2 days before you cook it (you don’t have to marinate the beef in advance, but it does make it super tasty! – see Tip). Take the beef out of the fridge about an hour before cooking, to let it come up to room temperature.", "Preheat the oven to 190°C/170°C fan/Gas 5.", "Preheat a dry frying pan until very hot, then sear the beef over a high heat until it’s coloured on all sides. Place the beef in a large, hob-proof roasting tray with the garlic halves and the thyme sprig and roast for about 45 minutes for medium rare (or until it reaches 45–47°C in the centre, if you have a meat thermometer). Add 10–12 minutes for medium (or until it reaches 55–60°C in the centre), or add about 20 minutes if you like it well done (or until it reaches 65–70°C in the centre).", "Transfer the beef to a warm platter, cover loosely with foil and leave to rest for at least 20 minutes, and anything up to 40 minutes, before serving.", "Meanwhile, to make the gravy, place the roasting tray over a low heat on the hob, add the onions to the juices in the tray and cook gently for about 20 minutes, stirring occasionally, until really soft and caramelised. Stir in the flour until combined, then whisk in the red wine, making sure there are no lumps. Bring to the boil, whisking, then bubble rapidly until the red wine has reduced by half. Stir in the hot stock, then cook over a medium heat for about 8 minutes, stirring occasionally, until reduced to a thick gravy.", "Carve the beef thinly and pour the gravy into a warm jug. Serve with Yorkshire Puddings and steamed chard."
-            ],
-            cooking_time: 40,
-            portions: 8,
-            category: "meat",
-            recipe_ingredients: [
-              %{ingredient: %{name: "Garlic"}, quantity: 3}, %{ingredient: %{name: "Onion"}, quantity: 3}
-            ]
-          }
-        ]
-      },
+      }
     ]
+  end
+
+  defp multi_data do
+    %{
+      chef_name: "Henrique Sá Pessoa",
+      recipe_name: "Rabbit stew",
+      steps: [
+        "Season the rabbit legs with salt and pepper then coat them in the flour. Shake off the excess flour and set it aside for later use", "Put the butter and oil into a large heavy-bottomed pan over a medium heat and when the butter has melted and the oil is hot, add the rabbit legs (in batches if necessary – the meat should sear, not steam). Brown the legs on all sides then remove from the pan and set aside", "Add the onion, celery and mushrooms to the pan and cook until soft and beginning to caramelize.", "Stir in the reserved flour and add enough wine to deglaze the pan. Return the rabbit legs and add the rest of the wine, the chicken stock and the thyme making sure the legs are submerged.", "Bring to the boil then reduce to a simmer, cover and cook on the hob for 60–70 minutes until the rabbit is tender. After 30 minutes, remove the lid to allow the liquid to reduce."
+      ],
+      cooking_time: 120,
+      category: "meat",
+      portions: 4,
+      ingredients: [
+        %{name: "rabbit leg"},
+        %{name: "mushroom"},
+        %{name: "thyme"}
+      ],
+      quantity: [1, 200, 1]
+    }
   end
 end

@@ -9,12 +9,21 @@ defmodule Cookbook.RecipeIngredient do
   schema "recipes_ingredients" do
     belongs_to :recipe, Recipe
     belongs_to :ingredient, Ingredient
-    field :quantity, :integer
+    field :quantity, :float
+  end
+
+  def multi_changeset(recipe_ingredient, params) do
+    recipe_ingredient
+    |> cast(params, ~w(quantity)a)
+    |> validate_required(~w(quantity)a)
+    |> validate_number(:quantity, greater_than: 0)
+    |> put_assoc(:ingredient, params[:ingredient])
+    |> put_assoc(:recipe, params[:recipe])
   end
 
   def changeset(recipe_ingredient, params) do
     recipe_ingredient
-    |> cast(params, ~w(:ingredient, :quantity])a)
+    |> cast(params, ~w(ingredient quantity])a)
     |> validate_required(~w(quantity)a)
     |> validate_number(:quantity, greater_than: 0)
   end
