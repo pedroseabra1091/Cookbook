@@ -15,9 +15,8 @@ Cookbook's menu includes :man_cook::
 - Bulk operations, Upserts
 - Streams, Repo.stream
 - Transaction
-
-Cookbook didn't left room for the :cake::
-- Multi
+- Multi with schema changeset validation
+- Multi with embedded changeset validation
 
 ## Before planning your recipes
 - execute `bin/setup` from the root of the project

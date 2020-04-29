@@ -102,8 +102,8 @@ defmodule Mix.Tasks.Seeds do
               %{ingredient: %{name: "garlic"}, quantity: 4},
               %{ingredient: %{name: "marinana"}, quantity: 2},
               %{ingredient: %{name: "milk ricotta"}, quantity: 16},
-              %{ingredient: %{name: "parmesan"}, quantity: 0.5},
-              %{ingredient: %{name: "parsley"}, quantity: 0.25},
+              %{ingredient: %{name: "parmesan"}, quantity: 1},
+              %{ingredient: %{name: "parsley"}, quantity: 10},
               %{ingredient: %{name: "egg"}, quantity: 1},
               %{ingredient: %{name: "mozzarella"}, quantity: 2},
             ]
