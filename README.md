@@ -9,8 +9,8 @@ Cookbook's menu includes :man_cook::
 - Changesets
 - Associations
   - `has_many`
-  - `many_many` 
-  - `many_many` with fields in the join table
+  - `many_to_many` 
+  - `many_to_many` with fields in the join table
 - `cast_assoc` and `put_assoc`
 - Bulk operations, Upserts
 - Streams, Repo.stream
