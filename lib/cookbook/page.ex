@@ -37,9 +37,7 @@ defmodule Cookbook.Page do
     Ecto.Multi.new()
     |> Ecto.Multi.insert_all(:ingredients, Ingredient, params[:ingredients], [on_conflict: :nothing, returning: true])
     |> Ecto.Multi.insert(:chef, chef_changeset(params), [on_conflict: :nothing, returning: true])
-    |> Ecto.Multi.run(:recipe, fn _repo, changes ->
-       Repo.insert(recipe_changeset(params, changes))
-    end)
+    |> Ecto.Multi.insert(:recipe, fn %{chef: chef} -> recipe_changeset(params, chef) end)
     |> Ecto.Multi.run(:recipe_ingredients, fn _repo, changes ->
       {:ok, create_recipe_ingredients(params, changes)}
     end)
@@ -47,7 +45,7 @@ defmodule Cookbook.Page do
 
   defp chef_changeset(%{chef_name: chef_name}), do: Chef.changeset(%Chef{}, %{name: chef_name})
 
-  defp recipe_changeset(recipe_params, %{chef: chef}) do
+  defp recipe_changeset(recipe_params, chef) do
     %{recipe_name: recipe_name, steps: steps, category: category, portions: portions, cooking_time: cooking_time} = recipe_params
 
     Recipe.multi_changeset(%Recipe{},
